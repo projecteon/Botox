@@ -1,23 +1,51 @@
-Synopsis
-At the top of the file there should be a short introduction and/ or overview that explains what the project is. This description should match descriptions added for package managers (Gemspec, package.json, etc.)
+Botox
+========
 
-Code Example
-Show what the library does as concisely as possible, developers should be able to figure out how your project solves their problem by looking at the code example. Make sure the API you are showing off is obvious, and that your code is short and concise.
+Visit the [Botox website](https://github.com/projecteon/Botox) for more information.
 
-Motivation
-A short description of the motivation behind the creation and maintenance of the project. This should explain why the project exists.
+### What is it?
+Botox is designed to be a ultra light weigth depency injection framework for the .NET portable class libraries.  
 
-Installation
-Provide code examples and explanations of how to get the project.
+### Basic use
 
-API Reference
-Depending on the size of the project, if it is small and simple enough the reference docs can be added to the README. For medium size to larger projects it is important to at least provide a link to where the API reference docs live.
+Registrer a a resolution with an interface:
 
-Tests
-Describe and show how to run the tests with code examples.
+<!-- {% examplecode csharp %} -->
+    Botox.Registrer<IFakeClass, FakeClass>(new FakeClass());
+<!-- {% endexamplecode %} -->
 
-Contributors
-Let people know how they can dive into the project, include important links to things like issue trackers, irc, twitter accounts if applicable.
+Or
 
-License
-A short snippet describing the license (MIT, Apache, etc.)
+<!-- {% examplecode csharp %} -->
+	Botox.Registrer<IFakeClass>(new FakeClass());
+<!-- {% endexamplecode %} -->
+
+Resolve:
+<!-- {% examplecode csharp %} -->
+	Botox.Resolve<IFakeClass>()
+<!-- {% endexamplecode %} -->
+
+The framework also supports creating instances of objects with constructor injection:
+
+<!-- {% examplecode csharp %} -->
+	private class FakeClassInjection
+        {
+            public readonly IFakeClass fakeClass;
+
+            public FakeClassInjection(IFakeClass fakeClass)
+            {
+                this.fakeClass = fakeClass;
+            }
+        }
+
+	var fakeClassInjection = Botox.CreateInstanceOf<FakeClassInjection>();
+<!-- {% endexamplecode %} -->
+
+###Motivation
+The project was created due to the lack of injection frameworks available at the time with support for portable class libraries.
+
+###Installation
+The project can be installed easiliy via NuGet or by downloading and compiling the source yourself.
+
+###License
+See Lisence.txt
