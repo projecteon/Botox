@@ -1,4 +1,6 @@
 #comment
+*.exe
+*.nupkg
 *.user
 *.suo
 *.orig
