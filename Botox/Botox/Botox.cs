@@ -23,6 +23,10 @@
 
         internal static object Resolve(Type type)
         {
+            if (CannotResolve(type))
+            {
+                throw new NotSupportedException("No resolve exists for : " + type);
+            }
             return ResolveCache[type];
         }
 
@@ -33,19 +37,22 @@
 
         public static T Resolve<T>()
         {
-            var type = typeof(T);
-            if (CannotResolve(type))
-            {
-                throw new NotSupportedException("No resolve exists for : " + type);
-            }
-
-            var resolvedObject = Resolve(type);
+            var resolvedObject = Resolve(typeof(T));
             return (T)resolvedObject;
         }
 
         public static T CreateInstanceOf<T>()
         {
             var typeCache = ConstructorResolver.FindConstructor<T>();
+            return (T)typeCache.Constructor.Invoke(typeCache.ResolvedParamters.ToArray());
+        }
+
+        public static T CreateInstanceOf<T>(Type type) 
+        {
+            if(!typeof(T).IsAssignableFrom(type))
+                throw new InvalidCastException(type + " is not assignable from " + typeof(T));
+            
+            var typeCache = ConstructorResolver.FindConstructor(type);
             return (T)typeCache.Constructor.Invoke(typeCache.ResolvedParamters.ToArray());
         }   
 

@@ -40,19 +40,51 @@
         }
 
         [Fact]
-        public void GivenTypeIsRegistrered_WhenCreateInstanceOnClassWithInjectionForThatType_ThenObjectIsCreatedWithInjection()
+        public void GivenTypeIsRegistrered_WhenGenericCreateInstanceOnClassWithInjectionForThatType_ThenObjectIsCreatedWithInjection()
         {
             Botox.Registrer<IFakeClass>(new FakeClass());
 
             var injectedObject = Botox.CreateInstanceOf<FakeClassInjection>();
 
-            Assert.IsType<FakeClass>(injectedObject.fakeClass);
+            Assert.IsType<FakeClass>(injectedObject.FakeClass);
+        }
+
+        [Fact]
+        public void GivenTypeHasOnlyDefaultConstructor_WhenGenericCreateInstanceIsCalledOnThatType_ThenExceptionIsThrown()
+        {
+            Assert.Throws<NotSupportedException>(() => Botox.CreateInstanceOf<FakeClass>());
+        }
+        
+        [Fact]
+        public void GivenClassHasConstructorWithNoneRegistreredType_WhenGenericCreateInstanceOnClassWithInjectionForThatType_ThenObjectIsCreatedWithConstructorThatHasValidResolves()
+        {
+            Botox.Registrer<IFakeClass>(new FakeClass());
+
+            var injectedObject = Botox.CreateInstanceOf<FakeClassDoubleInjection>();
+
+            Assert.IsType<FakeClass>(injectedObject.FakeClass2);
+        }
+
+        [Fact]
+        public void GivenTypeIsRegistrered_WhenCreateInstanceOnClassWithInjectionForThatType_ThenObjectIsCreatedWithInjection()
+        {
+            Botox.Registrer<IFakeClass>(new FakeClass());
+
+            var injectedObject = Botox.CreateInstanceOf<IFakeClassInjection>(typeof(FakeClassInjection));
+
+            Assert.IsType<FakeClass>(injectedObject.FakeClass);
+        }
+
+        [Fact]
+        public void GivenTypeIsNotAssignableFromGeneric_WhenCreateInstanceOnClassWithInjectionForThatType_ThenExceptionIsThrown()
+        {
+            Assert.Throws<InvalidCastException>(() => Botox.CreateInstanceOf<IFakeClass>(typeof(FakeClassInjection)));
         }
 
         [Fact]
         public void GivenTypeHasOnlyDefaultConstructor_WhenCreateInstanceIsCalledOnThatType_ThenExceptionIsThrown()
         {
-            Assert.Throws<NotSupportedException>(() => Botox.CreateInstanceOf<FakeClass>());
+            Assert.Throws<NotSupportedException>(() => Botox.CreateInstanceOf<IFakeClass>(typeof(FakeClass)));
         }
         
         [Fact]
@@ -60,26 +92,26 @@
         {
             Botox.Registrer<IFakeClass>(new FakeClass());
 
-            var injectedObject = Botox.CreateInstanceOf<FakeClassDoubleInjection>();
+            var injectedObject = Botox.CreateInstanceOf<IFakeClassDoubleInjection>(typeof(FakeClassDoubleInjection));
 
-            Assert.IsType<FakeClass>(injectedObject.fakeClass2);
+            Assert.IsType<FakeClass>(injectedObject.FakeClass2);
         }
 
-        private class FakeClassInjection
+        private class FakeClassInjection : IFakeClassInjection
         {
-            public readonly IFakeClass fakeClass;
+            public IFakeClass FakeClass { get; private set; }
 
             public FakeClassInjection(IFakeClass fakeClass)
             {
-                this.fakeClass = fakeClass;
+                this.FakeClass = fakeClass;
             }
         }
 
-        private class FakeClassDoubleInjection
+        private class FakeClassDoubleInjection : IFakeClassDoubleInjection
         {
-            private readonly IFakeClass fakeClass1;
+            private IFakeClass FakeClass1 { get; set; }
 
-            public readonly IFakeClass fakeClass2;
+            public IFakeClass FakeClass2 { get; private set; }
 
             public FakeClassDoubleInjection(IFakeClass fakeClass1, IFakeClass fakeClass2, INotImplemented notImplemented)
             {
@@ -93,19 +125,29 @@
 
             public FakeClassDoubleInjection(IFakeClass fakeClass1, IFakeClass fakeClass2)
             {
-                this.fakeClass1 = fakeClass1;
-                this.fakeClass2 = fakeClass2;
+                this.FakeClass1 = fakeClass1;
+                this.FakeClass2 = fakeClass2;
             }
 
             public FakeClassDoubleInjection(IFakeClass fakeClass)
             {
-                this.fakeClass1 = fakeClass;
+                this.FakeClass1 = fakeClass;
             }
         }
 
         private class FakeClass : IFakeClass
         {
         }
+    }
+
+    internal interface IFakeClassDoubleInjection
+    {
+         IFakeClass FakeClass2 { get; }
+    }
+
+    internal interface IFakeClassInjection
+    {
+        IFakeClass FakeClass { get; }
     }
 
     public interface IFakeClass

@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.20617.1 PREVIEW
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Botox", "Botox\Botox.csproj", "{276C7A49-9006-4DA6-B846-AED3DBE3CD6B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotoxTests", "BotoxTests\BotoxTests.csproj", "{F1BB7EC4-BCAB-4C23-80CF-08E3C297C7F8}"

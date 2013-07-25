@@ -17,21 +17,31 @@
                 return CreatedTypesCache[typeof(T)];
             }
 
-            return FindConstructorAndAddToCache<T>();
+            return FindConstructorAndAddToCache(typeof(T));
         }
 
-        private static ContructorCache FindConstructorAndAddToCache<T>()
+        public static ContructorCache FindConstructor(Type type)
         {
-            var constructor = ConstructorsSortedByParametersDescending(typeof(T));
-            if (constructor.Any(ValidConstructor<T>))
+            if (CreatedTypesCache.ContainsKey(type))
             {
-                return CreatedTypesCache[typeof(T)];
+                return CreatedTypesCache[type];
+            }
+
+            return FindConstructorAndAddToCache(type);
+        }
+
+        private static ContructorCache FindConstructorAndAddToCache(Type type)
+        {
+            var constructors = ConstructorsSortedByParametersDescending(type);
+            if (constructors.Any(constructor => ValidConstructor(type, constructor)))
+            {
+                return CreatedTypesCache[type];
             }
 
             throw new NotSupportedException("No contructor found with valid resolutions in cache.");
         }
 
-        private static bool ValidConstructor<T>(ConstructorInfo constructorInfo)
+        private static bool ValidConstructor(Type type, ConstructorInfo constructorInfo)
         {
             var list = new List<object>();
             foreach (var parameterInfo in constructorInfo.GetParameters())
@@ -46,7 +56,7 @@
                 list.Add(Botox.Resolve(typeToResolve));
             }
 
-            CreatedTypesCache.Add(typeof(T), new ContructorCache(constructorInfo, list));
+            CreatedTypesCache.Add(type, new ContructorCache(constructorInfo, list));
             return true;
         }
 
@@ -60,5 +70,6 @@
 
             return constructorWithParameters.OrderByDescending(constructor => constructor.GetParameters().Length);
         }
+
     }
 }
