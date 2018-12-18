@@ -1,0 +1,8 @@
+language: csharp
+solution: Botox.sln
+install:
+  - nuget restore Botox.sln
+  - nuget install xunit.runners -Version 1.9.2 -OutputDirectory testrunner
+script:
+  - xbuild /p:Configuration=Release Botox.sln
+  - mono ./testrunner/xunit.runners.1.9.2/tools/xunit.console.clr4.exe ./BotoxTests/bin/Release/MyProject.Tests.dll
