@@ -41,11 +41,11 @@ The framework also supports creating instances of objects with constructor injec
 	var fakeClassInjection = Botox.CreateInstanceOf<FakeClassInjection>();
 <!-- {% endexamplecode %} -->
 
-###Motivation
+### Motivation
 The project was created due to the lack of injection frameworks available at the time with support for portable class libraries.
 
-###Installation
+### Installation
 The project can be installed easiliy via NuGet or by downloading and compiling the source yourself.
 
-###License
+### License
 See Lisence.txt
